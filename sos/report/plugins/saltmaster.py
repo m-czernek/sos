@@ -5,6 +5,7 @@
 # version 2 of the GNU General Public License.
 #
 # See the LICENSE file in the source distribution for further information.
+import os
 import glob
 import yaml
 
@@ -46,9 +47,12 @@ class SaltMaster(Plugin, IndependentPlugin):
 
     def add_pillar_roots(self):
         cfgs = glob.glob("/etc/salt/master.d/*conf")
-        cfgs.append("/etc/salt/master")
-        all_pillar_roots = []
+        main_cfg = "/etc/salt/master"
 
+        if os.path.exists(main_cfg):
+            cfgs.append(main_cfg)
+
+        all_pillar_roots = []
         for cfg in cfgs:
             with open(cfg, "r") as f:
                 cfg_pillar_roots = (
